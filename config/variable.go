@@ -8,6 +8,7 @@ import (
 var (
 	Mode                 = utils.MustGetEnv("MODE")
 	SpaceNotif           = utils.MustGetEnv("SPACE_NOTIF")
+	GrcNotif             = utils.MustGetEnv("GRC_NOTIF")
 	TimeScheduleNotif, _ = strconv.Atoi(utils.MustGetEnv("TIME_SCHEDULE_NOTIF"))
 
 	// Ninja API

@@ -21,6 +21,7 @@ func main() {
 	}
 
 	if config.Mode == "test" {
+		log.Log("Scheduler test started")
 		if _, err = sch.NewJob(
 			gocron.DurationJob(time.Duration(config.TimeScheduleNotif)*time.Second),
 			gocron.NewTask(service.Notif),
@@ -35,9 +36,17 @@ func main() {
 			log.Log(err.Error())
 		}
 
-	} else {
 		if _, err = sch.NewJob(
-			gocron.WeeklyJob(0, gocron.NewWeekdays(time.Thursday), gocron.NewAtTimes(gocron.NewAtTime(5, 0, 0))),
+			gocron.DurationJob(time.Duration(config.TimeScheduleNotif)*time.Second),
+			gocron.NewTask(service.GRC),
+		); err != nil {
+			log.Log(err.Error())
+		}
+
+	} else {
+		log.Log("Scheduler started")
+		if _, err = sch.NewJob(
+			gocron.WeeklyJob(1, gocron.NewWeekdays(time.Thursday), gocron.NewAtTimes(gocron.NewAtTime(5, 0, 0))),
 			gocron.NewTask(service.Notif),
 		); err != nil {
 			log.Log(err.Error())
@@ -46,6 +55,13 @@ func main() {
 		if _, err = sch.NewJob(
 			gocron.DailyJob(1, gocron.NewAtTimes(gocron.NewAtTime(9, 10, 0))),
 			gocron.NewTask(service.HandleAttendance),
+		); err != nil {
+			log.Log(err.Error())
+		}
+
+		if _, err = sch.NewJob(
+			gocron.DailyJob(1, gocron.NewAtTimes(gocron.NewAtTime(9, 0, 0))),
+			gocron.NewTask(service.GRC),
 		); err != nil {
 			log.Log(err.Error())
 		}

@@ -94,7 +94,7 @@ func CreateCardWithButton(flag, msg string) *CardWithLink {
 			{
 				Cards: &MessageCard{
 					Header: &CardHeader{
-						Title:    flag,
+						Title: flag,
 					},
 					Sections: []*CardSection{
 						{
@@ -133,32 +133,37 @@ func CreateCardWithButton(flag, msg string) *CardWithLink {
 }
 
 func HandleSendToSpace(notifType int, flag, msg string) error {
-	// notif := struct {
-	// 	Text string `json:"text"`
-	// }{
-	// 	Text: flag + " " + msg,
-	// }
-
 	var (
 		card    *Card
 		cardV2  *CardWithLink
 		payload []byte
 		err     error
+		url     string
 	)
 
 	switch notifType {
 	case constant.Notif["ATTENDANCE"]:
+		url = config.SpaceNotif
 		cardV2 = CreateCardWithButton(flag, msg)
-
 		payload, err = json.Marshal(cardV2)
 		if err != nil {
 			return err
 		}
-
-		log.Log("Payload : ", string(payload))
 	case constant.Notif["UNIFORM"]:
+		url = config.SpaceNotif
 		card = CreateCard(flag, msg)
 		payload, err = json.Marshal(card)
+		if err != nil {
+			return err
+		}
+	case constant.Notif["GRC"]:
+		url = config.GrcNotif
+		notif := struct {
+			Text string `json:"text"`
+		}{
+			Text: flag + " " + msg,
+		}
+		payload, err = json.Marshal(notif)
 		if err != nil {
 			return err
 		}
@@ -167,14 +172,14 @@ func HandleSendToSpace(notifType int, flag, msg string) error {
 		return fmt.Errorf("invalid notif type: %d", notifType)
 	}
 
-	resp, errSend := http.Post(config.SpaceNotif, "application/json", bytes.NewBuffer(payload))
+	log.Log("Payload : ", string(payload))
+	resp, errSend := http.Post(url, "application/json", bytes.NewBuffer(payload))
 
 	res, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("error reading response body: %v", err)
 	}
 
-	// code, res, errSend := CreateHttpReq(config.SpaceNotif, "POST", "", "", string(payload))
 	log.Log("Code send notif : ", resp.StatusCode)
 	if errSend != nil {
 		log.Error("Error send notif : ", errSend.Error())
