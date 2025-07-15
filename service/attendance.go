@@ -16,7 +16,7 @@ func Attendance() (*string, string, error) {
 
 	randomTextType := constant.TextTypeString[pickInt+1]
 	log.Log("Random text type: ", randomTextType)
-	
+
 	var (
 		url  strings.Builder
 		word strings.Builder
@@ -199,14 +199,14 @@ func Attendance() (*string, string, error) {
 	return &sayWord, randomTextType, nil
 }
 
-func HandleAttendance()  {
+func HandleAttendance() {
 
 	if word, textType, err := Attendance(); err != nil {
 		if err := helper.HandleSendToSpace(constant.Notif["ATTENDANCE"], "🔔 [ATTENDANCE] 🔔 \n", "No Words Today"); err != nil {
 			log.Error("Error send notif : ", err.Error())
 		}
 		return
-	}else {
+	} else {
 
 		var emote strings.Builder
 		switch constant.TextType[textType] {
@@ -226,5 +226,17 @@ func HandleAttendance()  {
 		if err := helper.HandleSendToSpace(constant.Notif["ATTENDANCE"], fmt.Sprintf("%s [ATTENDANCE] - [%s] %s\n", emote.String(), strings.ToUpper(textType), emote.String()), *word); err != nil {
 			log.Error("Error send notif : ", err.Error())
 		}
+	}
+}
+
+func HandleCheckout() {
+	var (
+		textType = "KY!"
+		word     = "Checkout Time! Thanks for your hard work today! Remember to take a break and recharge for tomorrow"
+		emote    = "🤓"
+	)
+
+	if err := helper.HandleSendToSpace(constant.Notif["CHECKOUT"], fmt.Sprintf("%s [CHECKOUT] - [%s] %s\n", emote, strings.ToUpper(textType), emote), word); err != nil {
+		log.Error("Error send notif : ", err.Error())
 	}
 }

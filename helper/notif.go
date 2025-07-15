@@ -88,7 +88,12 @@ func CreateCard(flag, msg string) *Card {
 	return card
 }
 
-func CreateCardWithButton(flag, msg string) *CardWithLink {
+func CreateCardWithButton(flag, msg string, notifType int) *CardWithLink {
+	buttonText := "Absence Here"
+	if notifType == constant.Notif["CHECKOUT"] {
+		buttonText = "Checkout Here"
+	}
+
 	card := &CardWithLink{
 		CardsV2: []CardV2{
 			{
@@ -112,7 +117,7 @@ func CreateCardWithButton(flag, msg string) *CardWithLink {
 									ButtonList: &ButtonList{
 										Buttons: []Button{
 											{
-												Text: "Absence Here",
+												Text: buttonText,
 												OnClick: &OnClick{
 													OpenLink: &OpenLink{
 														URL: config.KyAttendanceUrl,
@@ -142,9 +147,9 @@ func HandleSendToSpace(notifType int, flag, msg string) error {
 	)
 
 	switch notifType {
-	case constant.Notif["ATTENDANCE"]:
+	case constant.Notif["ATTENDANCE"], constant.Notif["CHECKOUT"]:
 		url = config.SpaceNotif
-		cardV2 = CreateCardWithButton(flag, msg)
+		cardV2 = CreateCardWithButton(flag, msg, notifType)
 		payload, err = json.Marshal(cardV2)
 		if err != nil {
 			return err

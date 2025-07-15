@@ -22,6 +22,8 @@ func main() {
 
 	if config.Mode == "test" {
 		log.Log("Scheduler test started")
+
+		// uniform
 		if _, err = sch.NewJob(
 			gocron.DurationJob(time.Duration(config.TimeScheduleNotif)*time.Second),
 			gocron.NewTask(service.Notif),
@@ -29,6 +31,7 @@ func main() {
 			log.Log(err.Error())
 		}
 
+		// checkin
 		if _, err = sch.NewJob(
 			gocron.DurationJob(time.Duration(config.TimeScheduleNotif)*time.Second),
 			gocron.NewTask(service.HandleAttendance),
@@ -36,6 +39,15 @@ func main() {
 			log.Log(err.Error())
 		}
 
+		// checkout
+		if _, err = sch.NewJob(
+			gocron.DurationJob(time.Duration(config.TimeScheduleNotif)*time.Second),
+			gocron.NewTask(service.HandleCheckout),
+		); err != nil {
+			log.Log(err.Error())
+		}
+
+		// GRC
 		if _, err = sch.NewJob(
 			gocron.DurationJob(time.Duration(config.TimeScheduleNotif)*time.Second),
 			gocron.NewTask(service.GRC),
@@ -45,6 +57,8 @@ func main() {
 
 	} else {
 		log.Log("Scheduler started")
+
+		// uniform
 		if _, err = sch.NewJob(
 			gocron.WeeklyJob(1, gocron.NewWeekdays(time.Thursday), gocron.NewAtTimes(gocron.NewAtTime(5, 0, 0))),
 			gocron.NewTask(service.Notif),
@@ -52,15 +66,25 @@ func main() {
 			log.Log(err.Error())
 		}
 
+		// checkin
 		if _, err = sch.NewJob(
-			gocron.DailyJob(1, gocron.NewAtTimes(gocron.NewAtTime(9, 10, 0))),
+			gocron.WeeklyJob(1, gocron.NewWeekdays(time.Monday, time.Tuesday, time.Wednesday, time.Thursday, time.Friday), gocron.NewAtTimes(gocron.NewAtTime(8, 57, 0))),
 			gocron.NewTask(service.HandleAttendance),
 		); err != nil {
 			log.Log(err.Error())
 		}
 
+		// checkout
 		if _, err = sch.NewJob(
-			gocron.DailyJob(1, gocron.NewAtTimes(gocron.NewAtTime(9, 0, 0))),
+			gocron.WeeklyJob(1, gocron.NewWeekdays(time.Monday, time.Tuesday, time.Wednesday, time.Thursday, time.Friday), gocron.NewAtTimes(gocron.NewAtTime(17, 57, 0))),
+			gocron.NewTask(service.HandleCheckout),
+		); err != nil {
+			log.Log(err.Error())
+		}
+
+		// GRC
+		if _, err = sch.NewJob(
+			gocron.WeeklyJob(1, gocron.NewWeekdays(time.Monday, time.Tuesday, time.Wednesday, time.Thursday, time.Friday), gocron.NewAtTimes(gocron.NewAtTime(9, 0, 0))),
 			gocron.NewTask(service.GRC),
 		); err != nil {
 			log.Log(err.Error())
