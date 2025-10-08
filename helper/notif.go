@@ -138,6 +138,11 @@ func CreateCardWithButton(flag, msg string, notifType int) *CardWithLink {
 }
 
 func HandleSendToSpace(notifType int, flag, msg string) error {
+	defer func(){
+		if r := recover(); r != nil {
+			log.Error("Recovered in HandleSendToSpace", r)
+		}
+	}()
 	var (
 		card    *Card
 		cardV2  *CardWithLink
