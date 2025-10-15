@@ -39,11 +39,11 @@ func Notif() {
 	thursNum := getWeekNumberInMonth(nowA)
 
 	uniform := "HITAM"
-	if thursNum%2 == 0 {
-		uniform = "PUTIH"
-	}
+	// if thursNum%2 == 0 {
+	// 	uniform = "PUTIH"
+	// }
 
-	if err := helper.HandleSendToSpace(constant.Notif["UNIFORM"], fmt.Sprintf("🔔 [SERAGAM-KAMIS KE-%d] 🔔 \n", thursNum), fmt.Sprintf("Moshi², jangan lupa hari ini pakai seragam warna <b>%s</b> ya", uniform)); err != nil {
+	if err := helper.HandleSendToSpace(constant.Notif["UNIFORM"], fmt.Sprintf("🔔 [SERAGAM-KAMIS KE-%d] 🔔 \n", thursNum), fmt.Sprintf("Moshi², jangan lupa tiap hari kamis dah fix seragam warna <b>%s</b> ya", uniform)); err != nil {
 		log.Log(err.Error())
 	}
 }
